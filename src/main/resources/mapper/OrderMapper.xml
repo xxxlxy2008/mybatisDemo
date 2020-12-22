@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.OrderMapper">
+
+    <!-- 定义t_order表查询记录与Order对象之间映射 -->
+    <resultMap id="orderMap" type="Order">
+        <!-- 主键映射 -->
+        <id property="id" column="id"/>
+        <!-- 属性映射 -->
+        <result property="createTime" column="create_time"/>
+        <!-- 映射customer字段 -->
+        <association property="customer" javaType="Customer">
+            <id property="id" column="customer_id"/>
+        </association>
+        <!-- 映射deliveryAddress字段 -->
+        <association property="deliveryAddress" javaType="Address">
+            <id property="id" column="address_id"/>
+        </association>
+        <!-- 这里并没有映射orderItems集合-->
+    </resultMap>
+
+    <!-- 定义select语句，OrderMapper接口中的find()方法会执行该SQL，
+        查询结果通过orderMap这个映射生成Order对象-->
+    <select id="find" resultMap="orderMap">
+        SELECT * FROM t_order WHERE id = #{id:INTEGER}
+    </select>
+
+    <!-- 定义select语句，OrderMapper接口中的findByCustomerId()方法会执行该SQL，
+        查询结果通过orderMap这个映射生成Order对象。注意这里大于号、小于号在XML中的写法-->
+    <select id="findByCustomerId" resultMap="orderMap">
+        SELECT * FROM t_order WHERE customer_id = #{id}
+        and create_date_time <![CDATA[ >= ]]> #{startTime}
+        and  create_date_time <![CDATA[ <= ]]> #{endTime}
+    </select>
+
+    <!-- 定义insert语句，OrderMapper接口中的save()方法会执行该SQL，
+        数据库生成的自增id会自动填充到传入的Order对象的id字段中-->
+    <insert id="save" keyProperty="id" useGeneratedKeys="true">
+      insert into t_order (customer_id, address_id, create_time)
+      values (#{customer.id}, #{deliveryAddress.id}, #{createTime})
+    </insert>
+</mapper>

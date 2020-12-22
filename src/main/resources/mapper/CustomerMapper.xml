@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.CustomerMapper">
+
+    <!-- 定义映射规则 -->
+    <resultMap id="customerSimpleMap" type="Customer">
+        <!--  主键映射 -->
+        <id property="id" column="id"/>
+        <!--  属性映射 -->
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+    </resultMap>
+
+    <!-- 定义映射规则 -->
+    <resultMap id="customerMap" type="Customer">
+        <!--  主键映射 -->
+        <id property="id" column="id"/>
+        <!--  属性映射 -->
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <!-- 映射addresses集合 -->
+        <collection property="addresses" javaType="list" ofType="Address">
+            <id property="id" column="address_id"/>
+            <result property="street" column="street"/>
+            <result property="city" column="city"/>
+            <result property="country" column="country"/>
+        </collection>
+    </resultMap>
+
+    <!-- 定义select语句，CustomerMapper接口中的find()方法会执行该SQL，
+        查询结果通过customerSimpleMap这个映射生成Customer对象-->
+    <select id="find" resultMap="customerSimpleMap">
+        SELECT * FROM t_customer WHERE id = #{id:INTEGER}
+    </select>
+
+    <!-- 定义select语句，CustomerMapper接口中的findWithAddress()方法会执行该SQL，
+        查询结果通过customerMap这个映射生成Customer对象-->
+    <select id="findWithAddress" resultMap="customerMap">
+        SELECT c.*,a.id as address_id, a.* FROM t_customer as c join t_address as a
+        on c.id = a.customer_id
+        WHERE c.id = #{id:INTEGER}
+    </select>
+
+    <!-- CustomerMapper接口中的findByOrderId()方法会执行该SQL，
+        查询结果通过customerSimpleMap这个映射生成Customer对象-->
+    <select id="findByOrderId" resultMap="customerSimpleMap">
+        SELECT * FROM t_customer as c join t_order as t
+        on c.id = t.customer_id
+        WHERE t.customer_id = #{id:INTEGER}
+    </select>
+
+    <!-- 定义insert语句，CustomerMapper接口中的save()方法会执行该SQL，
+        数据库生成的自增id会自动填充到传入的Customer对象的id字段中-->
+    <insert id="save" keyProperty="id" useGeneratedKeys="true">
+      insert into t_customer (id, name, phone)
+      values (#{id},#{name},#{phone})
+    </insert>
+
+</mapper>

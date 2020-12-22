@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.AddressMapper">
+
+    <!-- Address查询结果的映射规则 -->
+    <resultMap id="addressMap" type="Address">
+        <!-- 主键映射 -->
+        <id property="id" column="id"/>
+        <!-- 属性映射 -->
+        <result property="street" column="street"/>
+        <result property="city" column="city"/>
+        <result property="country" column="country"/>
+    </resultMap>
+
+    <!-- 定义select语句，AddressMapper接口中的find()方法会执行该SQL，
+        查询结果通过addressMap这个映射生成Address对象-->
+    <select id="find" resultMap="addressMap">
+        SELECT * FROM t_address WHERE id = #{id:INTEGER}
+    </select>
+
+    <!-- 定义select语句，AddressMapper接口中的findAll()方法会执行该SQL，
+        查询结果通过addressMap这个映射生成Address对象-->
+    <select id="findAll" resultMap="addressMap">
+        SELECT * FROM t_address
+        WHERE customer_id = #{customerId:INTEGER}
+    </select>
+
+    <!-- 定义select语句，AddressMapper接口中的findByOrderId()方法会执行该SQL，
+    查询结果通过addressMap这个映射生成Address对象-->
+    <select id="findByOrderId" resultMap="addressMap">
+        SELECT a.* FROM t_address as a join t_order as o
+        on a.id = o.address_id
+        WHERE o.address_id = #{id}
+    </select>
+
+    <!-- 定义insert语句，AddressMapper接口中的save()方法会执行该SQL，
+        数据库生成的自增id会自动填充到传入的Address对象的id字段中-->
+    <insert id="save" keyProperty="address.id" useGeneratedKeys="true">
+      insert into t_address (street, city, country, customer_id)
+      values (#{address.street},#{address.city},#{address.country},#{customerId})
+    </insert>
+</mapper>
