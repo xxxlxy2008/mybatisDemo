@@ -50,7 +50,7 @@ public class CustomerService {
             Address address = new Address();
             address.setStreet(street);
             address.setCity(city);
-            address.setCountry(city);
+            address.setCountry(country);
             int affected = mapper.save(address, customerId);
             if (affected <= 0) {
                 throw new RuntimeException("Save Customer fail...");

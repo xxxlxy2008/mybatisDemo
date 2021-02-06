@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.dao.AddressMapper">
+
+    <!-- Animal映射规则 -->
+    <resultMap id="animalMap" type="Animal">
+        <!-- 主键映射 -->
+        <id property="id" column="id"/>
+        <!-- 针对classify列做判断-->
+        <discriminator column="classify" javaType="string">
+            <case value="mammalia" resultMap="mammaliaMap"/>
+            <case value="fish" resultMap="xxx"/>
+            <case value="bird" resultMap="xxx"/>
+        </discriminator>
+    </resultMap>
+
+    <!-- 哺乳类动物映射规则 -->
+    <resultMap id="mammaliaMap" type="Mammalia" extends="animalMap">
+        <result property="name" column="name"/>
+        <discriminator column="subClassify" javaType="string">
+            <case value="human" resultMap="humanMap"/>
+            <case value="cat" resultMap="..."/>
+        </discriminator>
+    </resultMap>
+
+    <!-- 人类映射规则 -->
+    <resultMap id="humanMap" type="Human" extends="animalMap">
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+    </resultMap>
+
+</mapper>
